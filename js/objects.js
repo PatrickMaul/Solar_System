@@ -7,7 +7,7 @@ function generatePlanets(planet) {
   //     material: Object => Material config
   // }
 
-  const radius = planet.radius / 2000;
+  const radius = planet.radius / 900;
 
   const geometry = new THREE.SphereGeometry(radius, 1024, 1024);
 
