@@ -1,15 +1,22 @@
 import { OrbitControls } from '../lib/OrbitControls.js';
 
+/**
+ * Initialize THREE.Scene
+ *
+ * @returns {object} Scene
+ */
 function init_scene() {
   return new THREE.Scene();
 }
 
+/**
+ * Initialize THREE.PerspectiveCamera
+ *
+ * @param {object} camera_config Cam config object, contains fov, near and far (each is a Number)
+ * @returns {object} PerspectiveCamera
+ */
 function init_camera(camera_config) {
-  // camera_config:{
-  //   fov: Number => Flied of View
-  //   near: Number => Nearest point to render
-  //   far: Number => Farest point to render
-  // }
+  if (!camera_config) return;
 
   return new THREE.PerspectiveCamera(
     camera_config.fov,
@@ -19,12 +26,13 @@ function init_camera(camera_config) {
   );
 }
 
+/**
+ * Initialize THREE.WebGLRenderer
+ *
+ * @param {object} renderer_config Renderer config object. Contains config (Object), shadow (Boolean)
+ * @returns {object} WebGLRenderer
+ */
 function init_renderer(renderer_config = {}) {
-  // renderer_config:{
-  //   config: Object => Config object to pass in WebGLRenderer()
-  //   shadow: Boolean => Render shadows
-  // }
-
   let renderer = null;
 
   if (renderer_config.config) renderer = new THREE.WebGLRenderer(renderer_config.config);
@@ -32,8 +40,10 @@ function init_renderer(renderer_config = {}) {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 
+  //  transparent background
   if (renderer_config.config.alpha) renderer.setClearColor(0x000000, 0);
 
+  //  allow shadows
   if (renderer_config.shadows) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -44,17 +54,45 @@ function init_renderer(renderer_config = {}) {
   return renderer;
 }
 
+/**
+ * Initialize OrbitControls.
+ * Depending on the need of the camera and renderer, this need to be initialized after them.
+ *
+ * @param {object} camera Camera object
+ * @param {object} rendereDomElement DOM element from renderer
+ * @returns {object} controls
+ */
 function init_controls(camera, renderer) {
   return new OrbitControls(camera, renderer.domElement);
 }
 
+/**
+ * Initialize Three.js
+ * Creating a scene, the camera and the session.
+ * Config object is needs at least the camera-configuration object.
+ *
+ * camera: {
+ *   fov: Number => Field of View,
+ *   near: Number => The nearest point the camera will render,
+ *   far: Number => The farest point the camera will render
+ * }
+ *
+ * renderer: {
+ *   config: Object => Three.js config from renderer => go to three.js documentation,
+ *   shadow: Boolean => Allow render shadows
+ * }
+ *
+ * @param {object} config Config object. Camera config and renderer config.
+ * @returns {[object]} Array of scene, camera, renderer and controls
+ */
 function init_three(config) {
-  const scene = init_scene();
-  const camera = init_camera(config.camera);
-  const renderer = init_renderer(config.renderer);
-  const controls = init_controls(camera, renderer);
+  const SCENE = init_scene();
+  const CAMERA = init_camera(config.camera);
+  const RENDERER = init_renderer(config.renderer);
 
-  return [scene, camera, renderer, controls];
+  const CONTROLS = init_controls(CAMERA, RENDERER);
+
+  return [SCENE, CAMERA, RENDERER, CONTROLS];
 }
 
 export { init_three };

@@ -1,4 +1,4 @@
-function generatePlanets(planet) {
+function generatePlanet(planet) {
   // planet:{
   //   name: String => name of the planet, needs for identification => should be unique
   //   radius: Number => raduis in km
@@ -7,21 +7,22 @@ function generatePlanets(planet) {
   //     material: Object => Material config
   // }
 
-  const radius = planet.radius / 900;
+  const RADIUS = planet.radius / 900;
 
-  const geometry = new THREE.SphereGeometry(radius, 1024, 1024);
+  const GEOMETRY = new THREE.SphereGeometry(RADIUS, 1024, 1024);
 
   let material = null;
   if (planet.has_texture) {
-    const texture = new THREE.TextureLoader().load(planet.texture);
-    material = new THREE.MeshBasicMaterial({ map: texture });
+    const TEXTURE = new THREE.TextureLoader().load(planet.texture);
+    if (planet.name != 'sun') material = new THREE.MeshLambertMaterial({ map: TEXTURE });
+    else material = new THREE.MeshBasicMaterial({ map: TEXTURE });
   } else new THREE.MeshBasicMaterial(planet.material);
 
-  const mesh = new THREE.Mesh(geometry, material);
+  const MESH = new THREE.Mesh(GEOMETRY, material);
 
-  mesh.name = planet.name;
+  MESH.name = planet.name;
 
-  return mesh;
+  return MESH;
 }
 
-export { generatePlanets };
+export { generatePlanet };
