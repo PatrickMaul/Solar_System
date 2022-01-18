@@ -1,33 +1,35 @@
 import { init_three } from './js/config.js';
-import { generatePlanet } from './js/objects.js';
 import { planetsRotation, planetsOrbit } from './js/actions.js';
+import { Planet } from './js/Planet.js';
 
-const PLANET_LIST = [
+const planetConfig = [
   {
     name: 'sun',
-    radius: 696340.0,
-    has_texture: true,
-    texture: './js/texture/sun.jpg',
+    radiusInKilometer: 696340.0,
+    texturePath: './js/texture/sun.jpg',
+    rotationSpeed: 0.001,
   },
   {
     name: 'mercury',
-    radius: 2439.76,
-    has_texture: true,
-    texture: './js/texture/mercury.jpg',
+    radiusInKilometer: 2439.76,
+    texturePath: './js/texture/mercury.jpg',
+    rotationSpeed: 0.0001,
   },
   {
     name: 'venus',
-    radius: 6051.59,
-    has_texture: true,
-    texture: './js/texture/venus.jpg',
+    radiusInKilometer: 6051.59,
+    texturePath: './js/texture/venus.jpg',
+    rotationSpeed: 0.0001,
   },
   {
     name: 'earth',
-    radius: 6378.15,
-    has_texture: true,
-    texture: './js/texture/earth.jpg',
+    radiusInKilometer: 6378.15,
+    texturePath: './js/texture/earth.jpg',
+    rotationSpeed: 0.0001,
   },
 ];
+
+let planets = {};
 
 function main() {
   const THREE_CONFIG = {
@@ -35,10 +37,11 @@ function main() {
     renderer: { shadows: true, config: { alpha: true } },
   };
 
-  const [SCENE, CAMERA, RENDERER, CONTROLS] = init_three(THREE_CONFIG);
+  const [scene, CAMERA, RENDERER, CONTROLS] = init_three(THREE_CONFIG);
 
-  PLANET_LIST.forEach((planet) => {
-    SCENE.add(generatePlanet(planet));
+  planetConfig.forEach((planet) => {
+    planets[planet.name] = new Planet(planet);
+    planets[planet.name].addMeshToScene(scene);
   });
 
   CAMERA.position.z = 2000;
@@ -46,11 +49,11 @@ function main() {
   function animate() {
     requestAnimationFrame(animate);
 
-    planetsRotation(SCENE);
-    planetsOrbit(SCENE, PLANET_LIST.filter((x) => x.name === 'sun')[0].radius);
+    planetsRotation(planets, scene);
+    // planetsOrbit(scene, planetConfig.filter((x) => x.name === 'sun')[0].radius);
 
     CONTROLS.update();
-    RENDERER.render(SCENE, CAMERA);
+    RENDERER.render(scene, CAMERA);
   }
   animate();
 }

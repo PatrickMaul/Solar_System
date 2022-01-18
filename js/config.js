@@ -86,13 +86,13 @@ function init_controls(camera, renderer) {
  * @returns {[object]} Array of scene, camera, renderer and controls
  */
 function init_three(config) {
-  const SCENE = init_scene();
+  const scene = init_scene();
   const CAMERA = init_camera(config.camera);
   const RENDERER = init_renderer(config.renderer);
 
   const CONTROLS = init_controls(CAMERA, RENDERER);
 
-  return [SCENE, CAMERA, RENDERER, CONTROLS];
+  return [scene, CAMERA, RENDERER, CONTROLS];
 }
 
 export { init_three };

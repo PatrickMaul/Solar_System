@@ -1,6 +1,10 @@
-function planetsRotation(scene) {
-  scene.getObjectByName('sun').rotation.y += 0.001;
-  scene.getObjectByName('sun').rotation.y += 0.001;
+function planetsRotation(planets, scene) {
+  for (const planetName in planets) {
+    if (Object.hasOwnProperty.call(planets, planetName)) {
+      const planet = planets[planetName];
+      scene.getObjectByName(planetName).rotation.y += planet.rotationSpeed;
+    }
+  }
 }
 
 function planetsOrbit(scene, sun_radius) {
