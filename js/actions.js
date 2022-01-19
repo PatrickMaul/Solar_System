@@ -1,23 +1,42 @@
 function planetsRotation(planets, scene) {
+  const earthRotation = 2 * Math.PI * (1 / 60) * (1 / 60); // 1 minute = 1 day
+
   for (const planetName in planets) {
     if (Object.hasOwnProperty.call(planets, planetName)) {
       const planet = planets[planetName];
-      scene.getObjectByName(planetName).rotation.y += planet.rotationSpeed;
+      scene.getObjectByName(planetName).rotation.y += earthRotation / planet.rotationInDays;
     }
   }
 }
 
-function planetsOrbit(scene, sun_radius) {
-  const SUN_DISTANCE = sun_radius / 900;
+/**
+ * Let all planets have an oribt, except the sun
+ *
+ * Definition:
+ *
+ * One day at the earth is 1 minute long
+ * One year is depending on the days length (1 minute) 365 minutes or ≈6.08 hours long (1m*365t = 365m / 60m = 6.08333333h)
+ *
+ * @param {array} planets Array of all Planets
+ * @param {object} scene The scene object where all planets inside
+ * @returns {void} void
+ */
+function planetsOrbit(planets, scene) {
+  const sunRadius = planets.sun.renderRadius;
+  const earthYear = (2 * Math.PI * (1 / 60) * (1 / 60)) / 365;
 
-  scene.getObjectByName('mercury').position.x = (SUN_DISTANCE + 100) * Math.cos(Date.now() * 0.001);
-  scene.getObjectByName('mercury').position.z = (SUN_DISTANCE + 100) * Math.sin(Date.now() * 0.001);
+  for (const planetName in planets) {
+    if (Object.hasOwnProperty.call(planets, planetName)) {
+      const planet = planets[planetName];
 
-  scene.getObjectByName('venus').position.x = (SUN_DISTANCE + 200) * Math.cos(Date.now() * 0.001);
-  scene.getObjectByName('venus').position.z = (SUN_DISTANCE + 200) * Math.sin(Date.now() * 0.001);
+      if (planetName === 'sun') continue;
 
-  scene.getObjectByName('earth').position.x = (SUN_DISTANCE + 300) * Math.cos(Date.now() * 0.001);
-  scene.getObjectByName('earth').position.z = (SUN_DISTANCE + 300) * Math.sin(Date.now() * 0.001);
+      scene.getObjectByName(planetName).position.x =
+        (sunRadius + planet.distanceToSun) * Math.cos(Date.now() * (earthYear / planet.orbitalSpeed));
+      scene.getObjectByName(planetName).position.z =
+        (sunRadius + planet.distanceToSun) * Math.sin(Date.now() * (earthYear / planet.orbitalSpeed));
+    }
+  }
 }
 
 export { planetsRotation, planetsOrbit };

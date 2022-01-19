@@ -18,12 +18,26 @@ function init_scene() {
 function init_camera(camera_config) {
   if (!camera_config) return;
 
-  return new THREE.PerspectiveCamera(
+  const camera = new THREE.PerspectiveCamera(
     camera_config.fov,
     window.innerWidth / window.innerHeight,
     camera_config.near,
     camera_config.far
   );
+
+  if (camera_config.position) {
+    camera.position.x = camera_config.position.x;
+    camera.position.y = camera_config.position.y;
+    camera.position.z = camera_config.position.z;
+  }
+
+  if (camera_config.rotation) {
+    camera.rotation.x = camera_config.rotation.x;
+    camera.rotation.y = camera_config.rotation.y;
+    camera.rotation.z = camera_config.rotation.z;
+  }
+
+  return camera;
 }
 
 /**
@@ -87,12 +101,24 @@ function init_controls(camera, renderer) {
  */
 function init_three(config) {
   const scene = init_scene();
-  const CAMERA = init_camera(config.camera);
-  const RENDERER = init_renderer(config.renderer);
+  const camera = init_camera(config.camera);
+  const renderer = init_renderer(config.renderer);
 
-  const CONTROLS = init_controls(CAMERA, RENDERER);
+  const controls = init_controls(camera, renderer);
 
-  return [scene, CAMERA, RENDERER, CONTROLS];
+  return [scene, camera, renderer, controls];
 }
 
-export { init_three };
+function generateBackground(scence) {
+  const geometry = new THREE.SphereGeometry(3000, 30, 30);
+
+  let material = new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load('./js/texture/stars_milky_way.jpg'),
+    side: THREE.BackSide,
+  });
+
+  let mesh = new THREE.Mesh(geometry, material);
+  scence.add(mesh);
+}
+
+export { init_three, generateBackground };
